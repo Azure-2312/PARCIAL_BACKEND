@@ -8,15 +8,15 @@ import psycopg2.extras
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'clave-secreta-sistema-2024'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=2)
-CORS(app, origins=["http://localhost:4200"])
+CORS(app, origins=["https://parcial-frontend-pi.vercel.app"])
 jwt = JWTManager(app)
 
 def get_db():
     return psycopg2.connect(
         host='localhost',
         user='postgres',
-        password='',
-        database='sistema_productos',
+        password='011124',
+        database='PARCIAL_DB',
         cursor_factory=psycopg2.extras.RealDictCursor
     )
 
