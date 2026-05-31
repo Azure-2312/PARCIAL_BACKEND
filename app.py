@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
@@ -12,14 +13,26 @@ CORS(app, origins=["https://parcial-frontend-pi.vercel.app", "http://localhost:4
 jwt = JWTManager(app)
 
 def get_db():
-    return psycopg2.connect(
-        host='localhost',
-        user='postgres',
-        password='011124',
-        database='PARCIAL_DB',
-        cursor_factory=psycopg2.extras.RealDictCursor
-    )
-
+    # Intentamos leer la URL de producción de Render. Si no existe, usa los datos locales por defecto.
+    db_url = os.environ.get('DATABASE_URL')
+    
+    if db_url:
+        # Configuración para PRODUCCIÓN (Render)
+        return psycopg2.connect(
+            db_url, 
+            sslmode='require', # Render exige SSL para conexiones externas
+            cursor_factory=psycopg2.extras.RealDictCursor
+        )
+    else:
+        # Configuración para DESARROLLO (Tu PC)
+        return psycopg2.connect(
+            host='localhost',
+            user='postgres',
+            password='011124',
+            database='PARCIAL_DB',
+            cursor_factory=psycopg2.extras.RealDictCursor
+        )
+    
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
