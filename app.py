@@ -2,23 +2,24 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from datetime import timedelta
+import os  # <--- Importante para leer variables de entorno
 import psycopg2
 import psycopg2.extras
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'clave-secreta-sistema-2024'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=2)
+
 CORS(app, resources={r"/api/*": {"origins": "*"}})
+
 jwt = JWTManager(app)
 
 def get_db():
-    return psycopg2.connect(
-        host='localhost',
-        user='postgres',
-        password='011124',
-        database='PARCIAL_DB',
-        cursor_factory=psycopg2.extras.RealDictCursor
+    database_url = os.environ.get(
+        'DATABASE_URL', 
+        'postgresql://postgres:011124@localhost:5432/PARCIAL_DB'
     )
+    return psycopg2.connect(database_url, cursor_factory=psycopg2.extras.RealDictCursor)
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -44,7 +45,6 @@ def login():
     if not user:
         return jsonify({'error': 'Usuario o contraseña incorrectos'}), 401
 
-    # identity como string, no diccionario
     token = create_access_token(identity=user['username'])
     return jsonify({
         'token': token,
@@ -75,4 +75,5 @@ def logout():
     return jsonify({'message': 'Sesión cerrada correctamente'}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
