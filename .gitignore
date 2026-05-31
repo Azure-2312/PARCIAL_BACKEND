@@ -1,0 +1,31 @@
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Archivos de caché y compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Variables de entorno (¡Muy importante para no filtrar contraseñas de BD!)
+.env
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# ---- NUEVAS ADICIONES RECOMENDADAS ----
+
+# Respaldos y scripts de Bases de Datos
+*.sql
+*.sqlite3
+
+# Configuración de entornos de desarrollo (IDE / Editores)
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
